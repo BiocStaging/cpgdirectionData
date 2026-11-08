@@ -1,5 +1,11 @@
 # Regenerates inst/extdata/metadata.csv from the resource registry in
-# R/accessors.R, so the two can never drift apart. Run from the package root.
+# R/accessors.R, so the two can never drift apart. Run from the package root:
+#   Rscript inst/scripts/make-metadata.R <zenodo record id> <deposit version>
+# (both are those of the Zenodo version holding the ten .rds files).
+args <- commandArgs(trailingOnly = TRUE)
+record <- if (length(args) >= 1) args[[1]] else "23257261"
+deposit <- if (length(args) >= 2) args[[2]] else "2.99.8"
+stopifnot(grepl("^[0-9]+$", record), nzchar(deposit))
 source("R/accessors.R")
 reg <- .CPGD_DATA_RESOURCES
 meta <- data.frame(
@@ -9,7 +15,7 @@ meta <- data.frame(
   Genome = reg$genome,
   SourceType = "CSV",
   SourceUrl = "https://doi.org/10.5281/zenodo.22225163",
-  SourceVersion = "2.99.8",
+  SourceVersion = deposit,
   Species = "Homo sapiens",
   TaxonomyId = 9606L,
   Coordinate_1_based = TRUE,
@@ -18,7 +24,7 @@ meta <- data.frame(
   RDataClass = "data.frame",
   DispatchClass = "Rds",
   Location_Prefix = "https://zenodo.org/",
-  RDataPath = paste0("records/23257261/files/", reg$name, ".rds"),
+  RDataPath = paste0("records/", record, "/files/", reg$name, ".rds"),
   stringsAsFactors = FALSE)
 write.csv(meta, "inst/extdata/metadata.csv", row.names = FALSE)
-cat("wrote inst/extdata/metadata.csv (", nrow(meta), " resources)\n", sep = "")
+cat("wrote inst/extdata/metadata.csv (", nrow(meta), " resources, record ", record, ", deposit ", deposit, ")\n", sep = "")

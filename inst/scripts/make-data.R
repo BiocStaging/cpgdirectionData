@@ -1,5 +1,12 @@
 # Build the .rds resources served by cpgdirectionData.
 #
+# The three catalogue lookups (lookup_<tissue>_hg19) are not converted here
+# since 0.99.5: inst/scripts/make-lookups/ rebuilds them from their sources
+# and writes the .rds files directly (see its README.md). This script
+# converts five of the other seven; distal_links and onco_eqtm_consensus are
+# written by cpgdirection's tools/build_distal_links.R and
+# tools/build_onco_eqtm.R.
+#
 # The layers are converted 1:1 from the csv.gz files shipped in the FULL
 # (GitHub) build of the cpgdirection package -- themselves produced by the
 # pipelines documented in the cpgdirection repository (catalogue models, SMR
@@ -21,9 +28,6 @@ stopifnot(nzchar(extdata), dir.exists(extdata))
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 resources <- c(
-  "lookup_blood_hg19",
-  "lookup_nasal_epithelium_hg19",
-  "lookup_solid_tissue_hg19",
   "smr_directions",
   "cpg_positions_hg19",
   "brain_directions",

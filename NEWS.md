@@ -1,3 +1,30 @@
+# cpgdirectionData 0.99.5
+
+* The three catalogue lookups (`lookup_blood_hg19`,
+  `lookup_nasal_epithelium_hg19`, `lookup_solid_tissue_hg19`) are rebuilt.
+  The build behind 0.99.0-0.99.4 had two errors in its gene table:
+  - a wrong chromosome for 46% of the blood lookup's Atlas genes (54% solid,
+    7% nasal), so a CpG was paired with a gene on another chromosome in
+    450,553 of 1,408,361 checkable blood rows, 288,290 of 829,224 solid rows
+    and 52,327 of 1,395,873 nasal rows;
+  - for 934 genes, a TSS taken from Atlas exports that are not hg19 (a median
+    326 kb off).
+* The pools, the saved models, the features, the candidate rule, the tiers
+  and the `DIRECT_eQTM` rule are unchanged. With the old gene placement the
+  new pipeline regenerates the old tables identically, except 492 / 44 / 205
+  rows where two genes share an identical TSS.
+* Every gene used now has its chromosome confirmed by the EPIC v2 annotation
+  and HGNC, or, where neither has the gene, by HELIX, the measured eQTMs and
+  its own training partners. Rows on another chromosome: 0.
+* New sizes: blood 2,051,017 pairs (672,298 CpGs; was 1,663,799 / 641,325),
+  nasal 1,523,103 (555,440; was 1,472,435 / 553,145), solid 1,188,710
+  (542,032; was 849,229 / 454,821). Blood `DIRECT_eQTM` rows: 25,752 (was
+  14,983).
+* The pipeline that builds them is `inst/scripts/make-lookups/` (README,
+  `build_lookups.py`, `export_inputs.R`, `write_rds.R`); `make-data.R` no
+  longer converts the lookups.
+* The other seven resources are byte-identical to 0.99.4.
+
 # cpgdirectionData 0.99.4
 
 * Zenodo deposit moved to version 2.99.8 (record 23257261; concept DOI
