@@ -1,3 +1,68 @@
+# cpgdirectionData 0.99.7
+
+* **The catalogue's training chain is rebuilt and committed.** 0.99.5 kept
+  the original training pools and the saved models, whose build was never
+  committed. Checked against Ensembl GRCh37, those pools had:
+  - wrong-end distances: 2,654 Framingham minus-strand blood rows (5.9%),
+    measured from a point a median 15.8 kb from the Ensembl TSS;
+  - non-hg19 TSSs in 156 TCGA solid rows;
+  - one gene under several names (GTEx ENSG IDs, Framingham clone names,
+    EVA-PR symbols, renamed HGNC symbols), each treated as its own gene by
+    the pools, the gene prior and the lookups;
+  - a pseudo-gene, "NAN": 3,935 HELIX rows from 1,461 unnamed transcript
+    clusters.
+
+  The saved calibrators and the solid model could not be regenerated. The
+  original procedure also fitted each calibrator to models unlike the final
+  one: with scikit-learn's early stopping (on above 10,000 rows), the solid
+  fold models ran 400 iterations, the final solid model stopped early, and
+  every final model left 10% of its pool out.
+* **`inst/scripts/make-lookups/` now holds the whole chain**, and it is
+  deterministic: `export_inputs.R`, `build_pools.py`, `train_models.py`,
+  `build_lookups.py` and `write_rds.R`.
+  - **Identity.** Each identified name resolves to one Ensembl GRCh37 gene
+    (annotables `grch37`, HGNC previous and alias symbols through
+    HGNChelper). The match is checked against the cohort's own coordinate
+    wherever the cohort gives one. 11,005 of 11,478 pool names give 10,725
+    genes.
+  - **TSS.** One 1-based, strand-aware TSS per gene: the cohort's own hg19 TSS
+    (EVA-PR, else HELIX) where it agrees with the identity, else the Ensembl
+    gene TSS. Training distances and lookups use the same TSS.
+  - **Models.** The three models are retrained on the harmonized pools by the
+    original procedure, with early stopping off: 400 iterations on all rows,
+    so each calibrator matches its model. Pools: blood 43,982 rows, nasal
+    28,978, solid 11,935. Out-of-fold AUCs are 0.848 / 0.865 / 0.662. The
+    blood rise from 0.793 comes from removing the "NAN" pseudo-gene; on
+    identified genes the AUC is 0.848 before and 0.851 after.
+  - **Lookups.** The candidate rule, tiers, call thresholds and
+    `DIRECT_eQTM` rule are unchanged; a gene's names are one candidate.
+  - **Solid tier B abstains** (PI ruling). The solid model's tier-B calls
+    agree 0.41 with the solid yardsticks (123 pairs, 95% CI 0.32-0.49), below
+    chance.
+* **New sizes.**
+
+  | lookup | pairs (0.99.5) | CpGs (0.99.5) |
+  |---|---|---|
+  | blood | 1,970,053 (2,051,017) | 668,711 (672,298) |
+  | nasal | 1,500,942 (1,523,103) | 552,167 (555,440) |
+  | solid | 1,184,630 (1,188,710) | 541,536 (542,032) |
+
+* **Validation.** Against independent yardsticks (MESA, HELIX Dryad, EVA-PR
+  nasal, FUSION, GTEx solid), with genes matched by Ensembl ID:
+  - blood and nasal hold, with differences the size refitting alone
+    produces;
+  - where a tissue model calls a yardstick pair in both builds, 7 of 14,670
+    signs differ;
+  - solid is lower: GTEx solid −0.021 at ladder level. The solid model's
+    tier-A calls agree 0.644 with FUSION and 0.618 with GTEx solid (was
+    0.677 and 0.674). The solid model is unstable: over 11 retrainings it
+    ranged 0.60-0.69 with FUSION.
+
+  This is a correction, not a gain in accuracy.
+* The other seven resources are byte-identical to 0.99.5. The build outputs
+  (pools, models, reports) are deposited with Zenodo deposit 2.99.10.
+* 0.99.6 was prepared and withdrawn before release.
+
 # cpgdirectionData 0.99.5
 
 * The three catalogue lookups (`lookup_blood_hg19`,

@@ -1,7 +1,7 @@
 Package: cpgdirectionData
 Type: Package
 Title: Data Layers for the cpgdirection Package (ExperimentHub)
-Version: 0.99.5
+Version: 0.99.7
 Authors@R: c(
     person("Tsachi", "Ein-Dor", email = "teindor@runi.ac.il",
            role = c("aut", "cre", "fnd"),

@@ -1,31 +1,23 @@
-# Inputs of build_lookups.py that live in R packages, written as csv.gz.
+# The two inputs of build_pools.py that come from R packages, written as csv.gz.
 #
-#   Rscript export_inputs.R <out_dir> [<cpgdirection data dir>]
+#   Rscript export_inputs.R <out_dir> <annotables grch37.rda>
 #
 # Writes:
-#   lookup_<tissue>.csv.gz   the shipped lookups (for the regression check)
-#   epic_gene_chr.csv.gz     EPIC v2 annotation: probes per gene and chromosome
-#   epic_zhou.csv.gz         EPIC v2 annotation: Zhou GENCODE v41 distance to TSS per probe-gene
-#   measured_pairs.csv.gz    cpgd_measured_eqtms() with hg19 CpG positions
-#   hgnc_table.csv.gz        HGNChelper::hgnc.table (symbol, approved symbol, chromosome)
+#   hgnc_table.csv.gz   HGNChelper::hgnc.table (symbol, approved symbol, chromosome)
+#   ens_grch37.csv.gz   Ensembl GRCh37 genes from the annotables grch37 table (Ensembl Genes
+#                       116, GRCh37): ensgene, symbol, chr, start, end, strand, strand-aware tss
+#                       <https://raw.githubusercontent.com/stephenturner/annotables/master/data/grch37.rda>
 suppressPackageStartupMessages(library(data.table))
 args <- commandArgs(trailingOnly = TRUE)
-out <- if (length(args) >= 1) args[[1]] else "inputs"
-if (length(args) >= 2) options(cpgdirection.data_dir = path.expand(args[[2]]))
+stopifnot("usage: Rscript export_inputs.R <out_dir> <grch37.rda>" = length(args) >= 2 && file.exists(args[[2]]),
+          requireNamespace("HGNChelper", quietly = TRUE))
+out <- args[[1]]
 dir.create(out, recursive = TRUE, showWarnings = FALSE)
-stopifnot(requireNamespace("cpgdirection", quietly = TRUE), requireNamespace("HGNChelper", quietly = TRUE))
-d <- function(b) as.data.table(cpgdirection:::.cpgd_data(b))
-for (t in c("blood", "nasal_epithelium", "solid_tissue"))
-  fwrite(d(paste0("lookup_", t, "_hg19")), file.path(out, paste0("lookup_", t, ".csv.gz")))
-A <- d("epicv2_probe_gene_annotation")
-fwrite(A[!is.na(chr) & nzchar(chr), .N, by = .(g = toupper(target_gene), chr)], file.path(out, "epic_gene_chr.csv.gz"))
-fwrite(A[!is.na(zhou_dist_tss), .(cpg_id, g = toupper(target_gene), chr, zhou_dist_tss)], file.path(out, "epic_zhou.csv.gz"))
-P <- d("cpg_positions_hg19")
-M <- as.data.table(cpgdirection::cpgd_measured_eqtms())
-M[, `:=`(chr = P$chr[match(cpg_id, P$cpg_id)], pos = P$pos[match(cpg_id, P$cpg_id)])]
-fwrite(M[!is.na(pos), .(cpg_id, g = toupper(target_gene), chr, pos, tss_dist, tissue, cohorts)],
-       file.path(out, "measured_pairs.csv.gz"))
 utils::data("hgnc.table", package = "HGNChelper", envir = environment())
 fwrite(hgnc.table, file.path(out, "hgnc_table.csv.gz"))
-cat(sprintf("inputs written to %s (HGNChelper %s, cpgdirection %s)\n", out,
-            as.character(utils::packageVersion("HGNChelper")), as.character(utils::packageVersion("cpgdirection"))))
+e <- new.env(); load(args[[2]], envir = e)
+E <- as.data.table(e$grch37)[, .(ensgene, symbol, chr = paste0("chr", chr), start, end, strand,
+                                 tss = ifelse(strand == 1, start, end))]
+fwrite(unique(E), file.path(out, "ens_grch37.csv.gz"))
+cat(sprintf("inputs written to %s (HGNChelper %s, annotables grch37 md5 %s)\n", out,
+            as.character(utils::packageVersion("HGNChelper")), unname(tools::md5sum(args[[2]]))))
