@@ -12,6 +12,8 @@
 \alias{getEpicv2ProbeGeneAnnotation}
 \alias{getDistalLinks}
 \alias{getOncoEqtmConsensus}
+\alias{getSmrDirectionsV2}
+\alias{getCpgCoordinates}
 \title{Named accessors for the individual data layers}
 \usage{
 getBloodLookup()
@@ -33,6 +35,10 @@ getEpicv2ProbeGeneAnnotation()
 getDistalLinks()
 
 getOncoEqtmConsensus()
+
+getSmrDirectionsV2()
+
+getCpgCoordinates()
 }
 \value{
 A \code{data.frame}; see \code{\link{cpgdData_resources}} for the
@@ -42,14 +48,18 @@ A \code{data.frame}; see \code{\link{cpgdData_resources}} for the
 Convenience wrappers around \code{\link{cpgdData}}, one per
   resource. \code{getBloodLookup()}, \code{getNasalEpitheliumLookup()} and
   \code{getSolidTissueLookup()} return the per-tissue catalogue tables;
-  \code{getSmrDirections()} the SMR causal directions;
+  \code{getSmrDirections()} the SMR causal directions read by
+  cpgdirection 0.99.x and 1.0.x, and \code{getSmrDirectionsV2()} the
+  second SMR layer (three expression outcomes, replication rung and
+  per-pair accuracy) read by cpgdirection 1.1.0 and later;
   \code{getCpgPositionsHg19()} the EPIC v2 hg19 probe positions;
   \code{getBrainDirections()} the brain SMR directions;
   \code{getSalivaBridgeScores()} the saliva-bridge scores; and
   \code{getEpicv2ProbeGeneAnnotation()} the multi-source probe-to-gene
   annotation; \code{getDistalLinks()} the distal enhancer/loop
-  CpG-to-gene links; and \code{getOncoEqtmConsensus()} the Onco-eQTM
-  cross-tumour consensus.
+  CpG-to-gene links; \code{getOncoEqtmConsensus()} the Onco-eQTM
+  cross-tumour consensus; and \code{getCpgCoordinates()} the probe
+  coordinates and array membership of the four Illumina arrays.
 }
 \examples{
 # Hub retrieval (default):  pos <- getCpgPositionsHg19()

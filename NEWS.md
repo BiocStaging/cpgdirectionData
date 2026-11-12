@@ -1,3 +1,42 @@
+# cpgdirectionData 0.99.8
+
+* **Two new resources; the ten existing ones are untouched.**
+  - `smr_directions_v2` (hg19): the second SMR layer, read by cpgdirection
+    1.1.0 and later. GoDMC mQTL instruments against three expression
+    outcomes (eQTLGen cis-eQTL, FinnGen immune-multiome PBMC and cell types,
+    INTERVAL blood RNA-seq): 768,862 CpG-gene pairs over 133,498 CpGs
+    (413,982 with an eQTLGen record, 135,334 seen in FinnGen alone, 219,546
+    in INTERVAL alone). Each pair carries its per-outcome records, a
+    replication rung (`smr_rung`: replicated 108,135; high 14,284; moderate
+    528,204; weak 52,878; reported 65,361) and a per-pair accuracy
+    (`smr_accuracy`) from a leave-one-chromosome-out model against measured
+    blood eQTMs (25,875 validated pairs; AUC 0.850; mean calibration gap
+    0.009). Built by `tools/build_smr_layer_interval.py` in cpgdirection.
+    Accessor: `getSmrDirectionsV2()`.
+  - `cpg_coordinates` (hg19 and hg38): array membership and coordinates for
+    every probe ID of the Illumina HM27, 450K, EPIC v1 and EPIC v2 arrays
+    (1,084,297 IDs), read by `cpgd_cpg_annotation()` in cpgdirection. hg38
+    from the Zhou-lab InfiniumAnnotation (SeSAMe) manifests, hg19 from the
+    Illumina 450K manifest or the EPIC v1 coordinates; a position is stored
+    only where `epicv2_probe_gene_annotation` (hg38) or `cpg_positions_hg19`
+    does not already give it (352,454 hg38, 141,945 hg19); 1,094 probes
+    that two sources place differently in hg38 are flagged. Built by
+    `tools/build_cpg_coordinates.R` in cpgdirection. Accessor:
+    `getCpgCoordinates()`.
+* **Why the second SMR layer has its own name.** cpgdirection 0.99.x and
+  1.0.x take every row of `smr_directions` at its tier. Served under that
+  name, the second layer would hand those versions 354,880 pairs they were
+  never validated on, 50,798 of them pairs the second layer itself marks
+  `reported` (not to be used for a direction). `smr_directions` (413,982
+  pairs) therefore stays exactly as deposited, and `getSmrDirections()`
+  still returns it.
+* `metadata.csv`: the ten existing rows are unchanged and keep Zenodo
+  record 24091940 (deposit 2.99.10); the two new rows point to the record of
+  deposit 2.99.11. `inst/scripts/make-metadata.R` takes resource names after
+  the record and the deposit version and then rewrites only those rows.
+* `inst/scripts/make-data.R` converts the two new resources and no longer
+  rebuilds `smr_directions`.
+
 # cpgdirectionData 0.99.7
 
 * **The catalogue's training chain is rebuilt and committed.** 0.99.5 kept

@@ -7,7 +7,7 @@
 \title{cpgdirectionData: data layers for the cpgdirection package}
 \description{
 ExperimentHub companion to \pkg{cpgdirection}. Bioconductor software
-packages are capped at 5 MB per file; the eight data layers served here
+packages are capped at 5 MB per file; the twelve data layers served here
 are larger than that, so they live on the Hub and are fetched on first
 use (then cached locally by ExperimentHub). The \pkg{cpgdirection}
 package retrieves them transparently through its data backend; direct

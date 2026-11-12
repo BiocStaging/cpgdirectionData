@@ -1,21 +1,24 @@
 Package: cpgdirectionData
 Type: Package
 Title: Data Layers for the cpgdirection Package (ExperimentHub)
-Version: 0.99.7
+Version: 0.99.8
 Authors@R: c(
     person("Tsachi", "Ein-Dor", email = "teindor@runi.ac.il",
            role = c("aut", "cre", "fnd"),
            comment = c(ORCID = "0000-0002-3078-7591")))
 Description: ExperimentHub companion to the cpgdirection package. Serves the
-    ten data layers too large to ship inside a Bioconductor software
+    twelve data layers too large to ship inside a Bioconductor software
     package: the three tissue catalogue lookup tables (blood, nasal
-    epithelium, solid tissue; hg19), the SMR causal-direction table, the
-    EPIC v2 hg19 probe positions, the brain SMR directions, the genome-wide
+    epithelium, solid tissue; hg19), the two SMR causal-direction tables
+    (the first, and the second with three expression outcomes and a
+    per-pair accuracy), the EPIC v2 hg19 probe positions, the brain SMR directions, the genome-wide
     saliva bridge scores, the multi-source EPIC v2 probe-to-gene
     annotation (five cross-validated annotation tracks with per-track
     support flags), the distal CpG-to-gene links from ENCODE-rE2G
-    enhancer-gene predictions (hg38), and the Onco-eQTM cross-tumour
-    cis-eQTM consensus (27 TCGA cancer types). Each resource is a
+    enhancer-gene predictions (hg38), the Onco-eQTM cross-tumour
+    cis-eQTM consensus (27 TCGA cancer types), and the probe coordinates
+    (hg19, hg38) and array membership of the HM27, 450K, EPIC v1 and EPIC
+    v2 arrays. Each resource is a
     serialized data.frame retrieved from ExperimentHub on first use and
     cached locally thereafter. The cpgdirection package consumes these
     resources transparently; direct use is possible through the accessors

@@ -8,7 +8,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Bioconductor software packages are capped at 5 MB per file. Eight of the
+Bioconductor software packages are capped at 5 MB per file. Twelve of the
 data layers behind the `cpgdirection` package are larger than that, so they
 live here, on ExperimentHub, and are fetched on first use -- then cached
 locally, so the download cost is paid once per machine.
@@ -50,8 +50,11 @@ options(old)
 
 ## Provenance
 
-Every resource is built by `inst/scripts/make-data.R` from the full
-cpgdirection build. The resources themselves are archived on Zenodo
+The resources are built by the scripts under `inst/scripts/` from the full
+cpgdirection build (`make-data.R`; the catalogue lookups by `make-lookups/`).
+Two SMR tables are served: `smr_directions`, read by cpgdirection 0.99.x and
+1.0.x, and `smr_directions_v2`, read by cpgdirection 1.1.0 and later; neither
+replaces the other. The resources themselves are archived on Zenodo
 (DOI [10.5281/zenodo.22225164](https://doi.org/10.5281/zenodo.22225164)) and retrieved from there by ExperimentHub. The multi-source EPIC v2 probe-to-gene annotation is
 the union of five independent tracks (Illumina EPIC-8v2-0_A2 manifest UCSC
 RefGene and GencodeV41; the Zhou lab SeSAMe GENCODE v41 annotation; the

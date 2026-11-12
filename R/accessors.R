@@ -22,7 +22,9 @@
     "saliva_bridge_scores",
     "epicv2_probe_gene_annotation",
     "distal_links",
-    "onco_eqtm_consensus"),
+    "onco_eqtm_consensus",
+    "smr_directions_v2",
+    "cpg_coordinates"),
   title = c(
     "cpgdirection lookup_blood_hg19",
     "cpgdirection lookup_nasal_epithelium_hg19",
@@ -33,7 +35,9 @@
     "cpgdirection saliva_bridge_scores",
     "cpgdirection epicv2_probe_gene_annotation",
     "cpgdirection distal_links",
-    "cpgdirection onco_eqtm_consensus"),
+    "cpgdirection onco_eqtm_consensus",
+    "cpgdirection smr_directions_v2",
+    "cpgdirection cpg_coordinates"),
   description = c(
     paste("Blood catalogue lookup: 1,970,053 CpG-gene pairs (668,711 CpGs,",
           "hg19) with predicted methylation-expression direction, calibrated",
@@ -74,9 +78,29 @@
           "113,560; O2 2-4 agreeing; O3 disagreeing; O4 single cancer),",
           "number of cancer types and correlation summaries recovered from",
           "the t statistics. Reported beside, never inside, the peripheral",
-          "direction call")),
+          "direction call"),
+    paste("Two-sample SMR causal directions in blood, second layer (GoDMC",
+          "mQTL instruments x three expression outcomes: eQTLGen cis-eQTL,",
+          "FinnGen immune-multiome PBMC and cell types, INTERVAL blood",
+          "RNA-seq): 768,862 CpG-gene pairs (133,498 CpGs), each with its",
+          "per-outcome records, a replication rung (replicated 108,135; high",
+          "14,284; moderate 528,204; weak 52,878; reported 65,361) and a",
+          "per-pair accuracy from a leave-one-chromosome-out model against",
+          "measured blood eQTMs. Read by cpgdirection >= 1.1.0; the resource",
+          "smr_directions, read by cpgdirection 0.99.x and 1.0.x, is",
+          "unchanged"),
+    paste("Probe coordinates and array membership for every probe ID of the",
+          "Illumina HM27, 450K, EPIC v1 and EPIC v2 methylation arrays",
+          "(1,084,297 IDs): the arrays carrying each probe; an hg38 position",
+          "from the Zhou-lab InfiniumAnnotation (SeSAMe) manifests and an",
+          "hg19 position from the Illumina 450K manifest or the EPIC v1",
+          "coordinates, each stored only where epicv2_probe_gene_annotation",
+          "(hg38) or cpg_positions_hg19 does not already give it (352,454",
+          "hg38 and 141,945 hg19 positions), and a flag for 1,094 probes",
+          "that two sources place differently in hg38. Read by",
+          "cpgd_cpg_annotation() in cpgdirection")),
   genome = c("hg19", "hg19", "hg19", "hg19", "hg19", "hg19", "hg19", "hg38",
-             "hg38", "hg19"),
+             "hg38", "hg19", "hg19", "hg38"),
   stringsAsFactors = FALSE)
 
 
@@ -156,14 +180,18 @@ cpgdData <- function(name) {
 #' @description Convenience wrappers around \code{\link{cpgdData}}, one per
 #'   resource. \code{getBloodLookup()}, \code{getNasalEpitheliumLookup()} and
 #'   \code{getSolidTissueLookup()} return the per-tissue catalogue tables;
-#'   \code{getSmrDirections()} the SMR causal directions;
+#'   \code{getSmrDirections()} the SMR causal directions read by
+#'   cpgdirection 0.99.x and 1.0.x, and \code{getSmrDirectionsV2()} the
+#'   second SMR layer (three expression outcomes, replication rung and
+#'   per-pair accuracy) read by cpgdirection 1.1.0 and later;
 #'   \code{getCpgPositionsHg19()} the EPIC v2 hg19 probe positions;
 #'   \code{getBrainDirections()} the brain SMR directions;
 #'   \code{getSalivaBridgeScores()} the saliva-bridge scores; and
 #'   \code{getEpicv2ProbeGeneAnnotation()} the multi-source probe-to-gene
 #'   annotation; \code{getDistalLinks()} the distal enhancer/loop
-#'   CpG-to-gene links; and \code{getOncoEqtmConsensus()} the Onco-eQTM
-#'   cross-tumour consensus.
+#'   CpG-to-gene links; \code{getOncoEqtmConsensus()} the Onco-eQTM
+#'   cross-tumour consensus; and \code{getCpgCoordinates()} the probe
+#'   coordinates and array membership of the four Illumina arrays.
 #' @return A \code{data.frame}; see \code{\link{cpgdData_resources}} for the
 #'   per-resource description.
 #' @examples
@@ -216,3 +244,11 @@ getDistalLinks <- function() cpgdData("distal_links")
 #' @rdname layer-accessors
 #' @export
 getOncoEqtmConsensus <- function() cpgdData("onco_eqtm_consensus")
+
+#' @rdname layer-accessors
+#' @export
+getSmrDirectionsV2 <- function() cpgdData("smr_directions_v2")
+
+#' @rdname layer-accessors
+#' @export
+getCpgCoordinates <- function() cpgdData("cpg_coordinates")
